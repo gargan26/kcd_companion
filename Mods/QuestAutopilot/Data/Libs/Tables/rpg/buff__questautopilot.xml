@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- KCD Companion's cheat modes (Misc tab, qa_api.lua QA.CHEATS): constant, non-persistent buffs the trainer adds and
+     removes. KCD1 merges a mod's buff__<name>.xml rows into its buff table (kcd-cheat ships buff__cheat.xml the same
+     way). The params are the engine's own stat codes, as the game's buff.xml uses them: imm immortal, upr, fdm fall
+     damage, hlh/slh head and slash limits, con/evi/lpv/nbi/noi/ors how visible and audible you are, rms run speed,
+     wat weapon attack, wac attack stamina cost, asp attack speed, cap carry capacity, xpm XP multiplier. -->
+<database name="hammerheart">
+  <table name="buff" version="1">
+    <rows>
+      <row buff_ai_tag_id="" buff_class_id="13" buff_desc="" buff_exclusivity_id="1" buff_id="4c8f2e1a-7b3d-4e59-a1c6-0d2f8b9e6a71" buff_lifetime_id="0" buff_name="kcdcompanion_god_mode" buff_ui_name="" buff_ui_order="" buff_ui_type_id="" buff_ui_visibility_id="" duration="-1" icon_id="0" implementation="Cpp:Constant" is_persistent="False" params="fdm=0,imm=1,hlh=0,slh=0,upr=1" slot_buff_ui_name="" slot_icon_id="" visual_effect="" />
+      <row buff_ai_tag_id="" buff_class_id="13" buff_desc="" buff_exclusivity_id="1" buff_id="9e3b7d52-1f6a-4c08-b2d4-6a5e8c1f3b97" buff_lifetime_id="0" buff_name="kcdcompanion_unseen" buff_ui_name="" buff_ui_order="" buff_ui_type_id="" buff_ui_visibility_id="" duration="-1" icon_id="0" implementation="Cpp:Constant" is_persistent="False" params="con=-100,evi=-100,lpv=-100,nbi=-10,noi=-100,ors=-10" slot_buff_ui_name="" slot_icon_id="" visual_effect="" />
+      <row buff_ai_tag_id="" buff_class_id="13" buff_desc="" buff_exclusivity_id="1" buff_id="2d6a9f13-8c4e-4b71-9e05-3f7b1a6d8c24" buff_lifetime_id="0" buff_name="kcdcompanion_fast" buff_ui_name="" buff_ui_order="" buff_ui_type_id="" buff_ui_visibility_id="" duration="-1" icon_id="0" implementation="Cpp:Constant" is_persistent="False" params="rms*2" slot_buff_ui_name="" slot_icon_id="" visual_effect="" />
+      <row buff_ai_tag_id="" buff_class_id="13" buff_desc="" buff_exclusivity_id="1" buff_id="7f1c4b8e-3a9d-4f62-8b17-5e2a9c6d0f38" buff_lifetime_id="0" buff_name="kcdcompanion_strong" buff_ui_name="" buff_ui_order="" buff_ui_type_id="" buff_ui_visibility_id="" duration="-1" icon_id="0" implementation="Cpp:Constant" is_persistent="False" params="wat*2,wac*0.5,asp*2" slot_buff_ui_name="" slot_icon_id="" visual_effect="" />
+      <row buff_ai_tag_id="" buff_class_id="13" buff_desc="" buff_exclusivity_id="1" buff_id="b5e8a2d6-4c1f-4a93-9d70-8f3e6b2c1a45" buff_lifetime_id="0" buff_name="kcdcompanion_carry" buff_ui_name="" buff_ui_order="" buff_ui_type_id="" buff_ui_visibility_id="" duration="-1" icon_id="0" implementation="Cpp:Constant" is_persistent="False" params="cap+1000" slot_buff_ui_name="" slot_icon_id="" visual_effect="" />
+      <row buff_ai_tag_id="" buff_class_id="13" buff_desc="" buff_exclusivity_id="1" buff_id="e3a7c9f1-6d2b-4e84-a5f0-1b8d4c7e9a62" buff_lifetime_id="0" buff_name="kcdcompanion_xp" buff_ui_name="" buff_ui_order="" buff_ui_type_id="" buff_ui_visibility_id="" duration="-1" icon_id="0" implementation="Cpp:Constant" is_persistent="False" params="xpm*3" slot_buff_ui_name="" slot_icon_id="" visual_effect="" />
+    </rows>
+  </table>
+</database>

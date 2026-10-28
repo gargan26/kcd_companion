@@ -1,0 +1,35 @@
+﻿KCD Companion 1.3.2
+=======================
+
+Install
+-------
+1. Open the game folder: in Steam, right-click Kingdom Come: Deliverance > Manage > Browse local files.
+2. Extract this zip into that folder, keeping its folders. It adds:
+     Mods\QuestAutopilot\               the mod
+     Bin\Win64\autopilot.asi            the plugin
+     Bin\Win64\dinput8.dll              Ultimate ASI Loader, which loads the plugin
+     Bin\Win64\quest_autopilot\         the browser panel and the Chinese font list
+3. Start the game and load a save.
+
+Epic - not yet tested there:
+The one-click installer (KCD-Companion-1.3.2-Installer.exe on the GitHub release page) finds an Epic install and puts
+the plugin beside its KingdomCome.exe. By hand:
+1. Open the game folder: in the Epic Games Launcher, Library > the game's ... > Manage > the folder icon beside
+   Installation.
+2. Extract this zip into that folder, keeping its folders. Then move what it put in Bin\Win64\ (autopilot.asi,
+   dinput8.dll, the quest_autopilot folder) into Bin\Win64MasterMasterEpicPGO\, next to KingdomCome.exe, and delete the
+   empty Bin\Win64\. Mods\QuestAutopilot\ stays where it is.
+3. Start the game and load a save. The Achievements tab works with Steam only.
+
+Use
+---
+F6         the trainer window in the game (the game ignores mouse and keyboard while it is open)
+F8         go to the current objective of the quest last picked in the journal
+Browser    http://127.0.0.1:17603 on the same PC, the same tabs as F6
+
+The trainer follows the game's language setting: its own words are in English, Chinese, French and German, and any other
+language gets English.
+Uninstall: delete the files listed above.
+
+Test on a copy of your save first. Unlock on the Achievements tab sets the achievement on your Steam account
+for good.

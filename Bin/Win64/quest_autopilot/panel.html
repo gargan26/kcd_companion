@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Companion</title>
+<link rel="icon" href="data:,">
+<style>
+:root {
+  --bg: #17130e; --panel: #211b14; --row: #261f17; --row2: #2c241a; --line: #3a3024;
+  --text: #ece3d3; --dim: #a69a86; --accent: #d9a65a; --accent2: #b5843f; --ok: #9fd18b; --bad: #e58a7a; --tag: #f0b45c;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.4 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; }
+header { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; }
+header h1 { font-size: 17px; margin: 0; color: var(--accent); font-weight: 600; }
+#where { color: var(--dim); font-size: 13px; flex: 1; }
+nav { display: flex; gap: 2px; padding: 0 16px; background: var(--panel); border-bottom: 1px solid var(--line); overflow-x: auto; position: sticky; top: 45px; z-index: 2; }
+nav button { background: none; border: none; color: var(--dim); padding: 9px 14px; font: inherit; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+nav button.on { color: var(--text); border-bottom-color: var(--accent); }
+main { padding: 12px 16px 40px; max-width: 1200px; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 8px; }
+.choices { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.choices button { background: var(--row2); color: var(--dim); border: 1px solid var(--line); border-radius: 4px; padding: 4px 11px; font: inherit; font-size: 14px; cursor: pointer; }
+.choices button.on { background: var(--accent2); color: #1a1209; border-color: var(--accent2); }
+input[type=search], input[type=text] { background: #120f0b; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 6px 9px; font: inherit; }
+input[type=search] { width: 260px; }
+input.small { width: 64px; }
+label { color: var(--dim); display: inline-flex; gap: 5px; align-items: center; cursor: pointer; }
+button.act { background: var(--accent2); color: #1a1209; border: none; border-radius: 4px; padding: 4px 10px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+button.act:hover { background: var(--accent); }
+button.big { padding: 6px 13px; font-size: 14px; }
+#msg { min-height: 1.4em; margin: 2px 0; }
+#msg.ok { color: var(--ok); } #msg.bad { color: var(--bad); }
+#status { color: var(--dim); font-size: 13px; margin-bottom: 8px; }
+details { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; margin: 8px 0; }
+summary { padding: 8px 12px; cursor: pointer; font-weight: 600; color: var(--accent); }
+summary .n { color: var(--dim); font-weight: 400; font-size: 13px; }
+.gsub { color: var(--dim); font-size: 13px; padding: 0 12px 6px; }
+.gact { padding: 0 12px 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+table { width: 100%; border-collapse: collapse; }
+td { padding: 5px 12px; border-top: 1px solid var(--line); vertical-align: middle; }
+tr:nth-child(even) td { background: var(--row2); }
+tr:nth-child(odd) td { background: var(--row); }
+td.d { width: 80px; color: var(--dim); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.a { width: 1%; white-space: nowrap; text-align: right; }
+td.a button { margin-left: 4px; }
+.sub { color: var(--dim); font-size: 13px; margin-left: 8px; }
+.tag { color: var(--tag); font-size: 12px; margin-left: 8px; text-transform: lowercase; }
+.doc { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 22px 18px; margin-top: 8px; }
+.doc h1, .doc h2, .doc h3 { color: var(--accent); }
+.doc code { background: #120f0b; padding: 1px 4px; border-radius: 3px; }
+.doc pre { background: #120f0b; padding: 10px; overflow-x: auto; }
+.doc table td, .doc table th { border: 1px solid var(--line); padding: 4px 8px; background: none; }
+.doc a { color: var(--accent); }
+.empty { color: var(--dim); padding: 12px; }
+#ask { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: none; align-items: center; justify-content: center; z-index: 5; }
+#ask.on { display: flex; }
+#ask .box { background: var(--panel); border: 1px solid var(--accent2); border-radius: 6px; padding: 16px 18px; max-width: 520px; margin: 16px; }
+#ask p { margin: 0 0 12px; }
+#ask .btns { display: flex; gap: 8px; justify-content: flex-end; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+#ask .btns label { margin-right: auto; }
+@media (max-width: 640px) { input[type=search] { width: 100%; } td.d { width: 56px; } }
+</style>
+</head>
+<body>
+<header><h1 id="title">Companion</h1><div id="where">connecting…</div><button class="act big" id="back">Back</button></header>
+<nav id="tabs"></nav>
+<main>
+  <div class="bar" id="bar"></div>
+  <div class="choices" id="choices"></div>
+  <div id="msg"></div>
+  <div id="status"></div>
+  <div id="body"></div>
+</main>
+<div id="ask"><div class="box"><p id="ask-text"></p><div class="btns">
+  <label><input type="checkbox" id="ask-mute"> <span id="ask-mute-label"></span></label>
+  <button class="act big" id="ask-no"></button><button class="act big" id="ask-yes"></button></div></div></div>
+<script>
+// The trainer's browser face, for both KCD trainers. Every tab, list and button comes from the mod's API (KCD2
+// qt_api.lua, KCD1 qa_api.lua), the same JSON the in-game F6 window draws, so both faces stay in step.
+const BASE = new URLSearchParams(location.search).get('base') || '';
+const state = { tab: null, filter: {}, options: {}, inputs: {}, choices: {}, open: {}, data: null, timer: null, busy: false };
+// The panel's own fixed words, in the game's language once the mod's state call names them (KCD2); English otherwise.
+let T = {};
+const t = (key, english) => T[key] || english;
+
+async function api(path) {
+  const r = await fetch(BASE + '/api/' + path);
+  const text = await r.text();
+  try { return JSON.parse(text); } catch (e) { return { ok: false, msg: text.slice(0, 200) }; }
+}
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === 'class') e.className = v; else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else if (v != null) e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) e.append(k);
+  return e;
+}
+
+function fmtDist(d) { return d == null ? '' : d >= 1000 ? (d / 1000).toFixed(1) + ' km' : Math.round(d) + ' m'; }
+
+function fill(args) {
+  const inputs = state.inputs[state.tab] || {};
+  return (args || '').replace(/\{(\w+)\}/g, (_, k) => encodeURIComponent(inputs[k] ?? ''));
+}
+
+async function run(a) {
+  const r = await api(a.call + '?' + fill(a.args));
+  const m = document.getElementById('msg');
+  m.textContent = r.msg || '';
+  m.className = r.ok ? 'ok' : 'bad';
+  load();
+}
+
+// A button that carries `confirm` (a risky quest skip) asks first; ticking the mute box runs `opt?<mute>` too, so
+// the mod stops asking.
+function ask(a) {
+  const box = document.getElementById('ask'), mute = document.getElementById('ask-mute');
+  document.getElementById('ask-text').textContent = a.confirm;
+  document.getElementById('ask-mute-label').textContent = a.confirm_mute || "Don't remind me again";
+  document.getElementById('ask-yes').textContent = a.confirm_yes || 'OK';
+  document.getElementById('ask-no').textContent = a.confirm_no || 'Cancel';
+  mute.checked = false;
+  box.classList.add('on');
+  document.getElementById('ask-no').onclick = () => box.classList.remove('on');
+  document.getElementById('ask-yes').onclick = async () => {
+    box.classList.remove('on');
+    if (mute.checked && a.mute) await api('opt?' + a.mute);
+    run(a);
+  };
+}
+
+function buttons(actions, big) {
+  return (actions || []).map(a => el('button', { class: 'act' + (big ? ' big' : ''), title: a.tip || null,
+    onclick: () => a.confirm ? ask(a) : run(a) }, a.label));
+}
+
+function query() {
+  const p = new URLSearchParams({ name: state.tab });
+  const f = state.filter[state.tab]; if (f) p.set('q', f);
+  for (const [k, on] of Object.entries(state.options[state.tab] || {})) if (on) p.set(k, '1');
+  for (const [k, v] of Object.entries(state.choices[state.tab] || {})) p.set(k, v);
+  return p.toString();
+}
+
+async function load() {
+  if (!state.tab || state.busy) return;
+  state.busy = true;
+  const tab = state.tab;
+  try {
+    const d = await api('tab?' + query());
+    if (tab === state.tab) { state.data = d; render(); }
+    clearTimeout(state.timer);
+    if (d.refresh > 0) state.timer = setTimeout(load, d.refresh * 1000);
+  } catch (e) {
+    document.getElementById('status').textContent = t('no_plugin', 'no answer from the game (is it running with the plugin?)');
+    clearTimeout(state.timer); state.timer = setTimeout(load, 3000);
+  } finally { state.busy = false; }
+}
+
+function renderBar(d) {
+  const bar = document.getElementById('bar');
+  const focused = document.activeElement && document.activeElement.id;
+  bar.replaceChildren();
+  if (d.filter !== false) {
+    const f = el('input', { type: 'search', id: 'filter', placeholder: t('filter', 'filter'), value: state.filter[state.tab] || '' });
+    let pause;
+    f.addEventListener('input', () => { state.filter[state.tab] = f.value; clearTimeout(pause); pause = setTimeout(load, 250); });
+    bar.append(f);
+  }
+  const opts = state.options[state.tab] = state.options[state.tab] || {};
+  for (const o of d.options || []) {
+    if (!(o.key in opts)) opts[o.key] = !!o.on;
+    const c = el('input', { type: 'checkbox' }); c.checked = opts[o.key];
+    c.addEventListener('change', () => { opts[o.key] = c.checked; load(); });
+    bar.append(el('label', {}, c, o.label));
+  }
+  const ins = state.inputs[state.tab] = state.inputs[state.tab] || {};
+  const onEnter = (d.actions || []).find(a => a.enter);
+  for (const i of d.inputs || []) {
+    if (!(i.key in ins)) ins[i.key] = i.value;
+    const x = el('input', { type: 'text', class: 'small', id: 'in-' + i.key, value: ins[i.key] });
+    x.addEventListener('input', () => { ins[i.key] = x.value; });
+    if (onEnter) x.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); run(onEnter); } });
+    bar.append(el('label', {}, i.label, x));
+  }
+  bar.append(...buttons(d.actions, true));
+  // A choice bar (the Items tab's categories): one pick among several, sent as key=value.
+  const picked = state.choices[state.tab] = state.choices[state.tab] || {};
+  const ch = document.getElementById('choices');
+  ch.replaceChildren();
+  for (const c of d.choices || []) {
+    const current = picked[c.key] ?? c.value;
+    for (const i of c.items || []) {
+      ch.append(el('button', { class: i.value === current ? 'on' : '', onclick: () => { picked[c.key] = i.value; load(); } }, i.label));
+    }
+  }
+  // A re-render rebuilds the bar: give focus back to the box that had it (the filter or an input), caret at the end.
+  if (focused === 'filter' || (focused && focused.startsWith('in-'))) {
+    const f = document.getElementById(focused);
+    if (f) { f.focus(); f.setSelectionRange(f.value.length, f.value.length); }
+  }
+}
+
+function render() {
+  const d = state.data || {};
+  renderBar(d);
+  document.getElementById('status').textContent = d.status || '';
+  const body = document.getElementById('body');
+  const kids = [];
+  if (d.doc) kids.push(el('div', { class: 'doc', html: null }));
+  for (const g of d.groups || []) {
+    const key = state.tab + '|' + g.title;
+    const open = key in state.open ? state.open[key] : g.open !== false;
+    const det = el('details', open ? { open: '' } : {});
+    det.addEventListener('toggle', () => { state.open[key] = det.open; });
+    const n = g.count != null ? g.count : (g.rows ? g.rows.length : 0);
+    if (g.title) det.append(el('summary', {}, g.title + ' ', el('span', { class: 'n' }, n ? '(' + n + ')' : '')));
+    if (g.sub) det.append(el('div', { class: 'gsub' }, g.sub));
+    if (g.actions && g.actions.length) det.append(el('div', { class: 'gact' }, ...buttons(g.actions)));
+    if (g.rows && g.rows.length) {
+      const tbl = el('table');
+      for (const r of g.rows) {
+        tbl.append(el('tr', {},
+          el('td', { title: r.tip || null }, r.text || '', r.tag ? el('span', { class: 'tag' }, r.tag) : null, r.sub ? el('span', { class: 'sub' }, r.sub) : null),
+          el('td', { class: 'd' }, fmtDist(r.dist)),
+          el('td', { class: 'a' }, ...buttons(r.actions))));
+      }
+      det.append(tbl);
+    } else if (!g.title) continue;
+    kids.push(det);
+  }
+  if (!kids.length && !d.doc) kids.push(el('div', { class: 'empty' }, t('nothing', 'nothing here')));
+  body.replaceChildren(...kids);
+  if (d.doc) body.firstChild.innerHTML = markdown(d.doc);
+}
+
+// A small markdown renderer for the guides: headings, lists, tables, code, emphasis, links.
+function markdown(src) {
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inline = s => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+    .replace(/\*([^*]+)\*/g, '<i>$1</i>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  const lines = src.replace(/\r/g, '').split('\n');
+  let out = '', i = 0;
+  while (i < lines.length) {
+    const l = lines[i];
+    if (l.startsWith('```')) { let c = ''; i++; while (i < lines.length && !lines[i].startsWith('```')) c += esc(lines[i++]) + '\n'; i++; out += '<pre>' + c + '</pre>'; continue; }
+    const h = l.match(/^(#{1,4})\s+(.*)/); if (h) { out += `<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`; i++; continue; }
+    if (l.startsWith('|')) {
+      let rows = []; while (i < lines.length && lines[i].startsWith('|')) rows.push(lines[i++]);
+      rows = rows.filter(r => !/^\|[\s:|-]+\|$/.test(r));
+      out += '<table>' + rows.map((r, n) => '<tr>' + r.slice(1, -1).split('|').map(c => (n ? '<td>' : '<th>') + inline(c.trim())).join('') + '</tr>').join('') + '</table>';
+      continue;
+    }
+    if (/^\s*([-*]|\d+\.)\s/.test(l)) {
+      out += '<ul>'; while (i < lines.length && /^\s*([-*]|\d+\.)\s/.test(lines[i])) out += '<li>' + inline(lines[i++].replace(/^\s*([-*]|\d+\.)\s/, '')) + '</li>';
+      out += '</ul>'; continue;
+    }
+    if (!l.trim()) { i++; continue; }
+    let p = ''; while (i < lines.length && lines[i].trim() && !/^(#|\||```|\s*([-*]|\d+\.)\s)/.test(lines[i])) p += lines[i++] + ' ';
+    out += '<p>' + inline(p) + '</p>';
+  }
+  return out;
+}
+
+async function where() {
+  try {
+    const s = await api('state');
+    if (s.title) { document.getElementById('title').textContent = s.title; document.title = s.title; }
+    if (s.text) { T = s.text; document.getElementById('back').textContent = t('back', 'Back'); }
+    if (s.lang) document.documentElement.lang = s.lang === 'zh' ? 'zh-Hans' : s.lang;
+    document.getElementById('where').textContent = s.inGame
+      ? `${s.level || '?'} · ${Math.round(s.x)}, ${Math.round(s.y)}` : t('no_save', 'game running, no save loaded');
+  } catch (e) { document.getElementById('where').textContent = t('no_answer', 'no answer from the game'); }
+  setTimeout(where, 2000);
+}
+
+async function start() {
+  document.getElementById('back').onclick = () => run({ call: 'back', args: '' });
+  let tabs = [];
+  try { tabs = await api('tabs'); } catch (e) {}
+  if (!Array.isArray(tabs) || !tabs.length) {
+    // `why`: the trainer cannot answer at all (the mod not loaded), and the reason
+    document.getElementById('status').textContent = (tabs && tabs.why) || t('waiting', 'waiting for the game…');
+    setTimeout(start, 2000); return;
+  }
+  try { const s = await api('state'); if (s.text) T = s.text; } catch (e) {}
+  const nav = document.getElementById('tabs');
+  nav.replaceChildren(...tabs.map(t => el('button', { 'data-id': t.id, onclick: () => pick(t.id) }, t.title)));
+  pick(tabs[0].id);
+  where();
+}
+
+function pick(id) {
+  state.tab = id; state.data = null;
+  for (const b of document.querySelectorAll('nav button')) b.classList.toggle('on', b.dataset.id === id);
+  document.getElementById('msg').textContent = '';
+  document.getElementById('body').replaceChildren(el('div', { class: 'empty' }, t('loading', 'loading…')));
+  load();
+}
+
+start();
+</script>
+</body>
+</html>
